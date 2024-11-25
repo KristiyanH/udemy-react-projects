@@ -5,6 +5,7 @@ export default function SideBar({
   onStartAddProject,
   projects,
   onSelectProject,
+  selectedProjectId
 }) {
   return (
     <aside className="w-1/3 px-8 py-16 bg-stone-900 text-stone-50 md:w-72 rounded-r-xl">
@@ -12,7 +13,7 @@ export default function SideBar({
         Your Projects
       </h2>
       <Button onClick={onStartAddProject}>+ Add Project</Button>
-      <ProjectsList projects={projects} onSelectProject={onSelectProject} />
+      <ProjectsList projects={projects} onSelectProject={onSelectProject} selectedProjectId={selectedProjectId} />
     </aside>
   );
 }
