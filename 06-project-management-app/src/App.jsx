@@ -9,7 +9,33 @@ function App() {
   const [projectsState, setProjectsState] = useState({
     selectedProjectId: undefined,
     projects: [],
+    tasks: []
   });
+
+  function handleAddTask(text){
+    setProjectsState((prevState) => {
+      const taskId = Math.random();
+      const newTask = {
+        text,
+        id: taskId,
+        projectId: prevState.selectedProjectId
+      };
+
+      return {
+        ...prevState,
+        tasks: [...prevState.tasks, newTask]
+      };
+    });
+  }
+
+  function handleDeleteTask(taskId){
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        tasks: prevState.tasks.filter((task) => task.id !== taskId)
+      };
+    });
+  }
 
   function handleSelectProject(projectId) {
     setProjectsState((prevState) => {
@@ -53,6 +79,21 @@ function App() {
     });
   }
 
+  function handleOnDeleteProject() {
+    // const projectIndex = projectsState.projects.findIndex(
+    //   (id) => id === projectId
+    // );
+
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: undefined,
+        // projects: [...prevState.projects.splice(projectIndex, 1)],
+        projects: prevState.projects.filter((project) => project.id !== prevState.selectedProjectId)
+      };
+    });
+  }
+
   let content;
 
   if (projectsState.selectedProjectId === null) {
@@ -65,11 +106,17 @@ function App() {
   } else if (projectsState.selectedProjectId === undefined) {
     content = <NoProjectSelected onStartAddProject={handleStartAddProject} />;
   } else {
-    const selectedProject = projectsState.projects.find(({ id }) => id === projectsState.selectedProjectId);
+    const selectedProject = projectsState.projects.find(
+      ({ id }) => id === projectsState.selectedProjectId
+    );
 
     content = (
       <ProjectDetails
         project={selectedProject}
+        onDeleteProject={handleOnDeleteProject}
+        onAddTask={handleAddTask}
+        onDeleteTask={handleDeleteTask}
+        tasks={projectsState.tasks}
       />
     );
   }
