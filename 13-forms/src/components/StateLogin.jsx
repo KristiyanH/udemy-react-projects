@@ -1,22 +1,30 @@
-import { useState } from "react";
+import Input from "./Input";
+import { isEmail, isNotEmpty, hasMinLength } from "../util/validation";
+import { useInput } from "../hooks/useInput";
 
 export default function StateLogin() {
-  const [enteredCredentials, setEnteredCredentials] = useState({
-    email: "",
-    password: "",
-  });
+  const {
+    value: emailValue,
+    handleInputChange: handleEmailChange,
+    handleInputBlur: handleEmailBlur,
+    hasError: emailHasError,
+  } = useInput("", (value) => isEmail(value) && isNotEmpty(value));
+
+  const {
+    value: passwordValue,
+    handleInputChange: handlePasswordChange,
+    handleInputBlur: handlePasswordBlur,
+    hasError: passwordHasError,
+  } = useInput("", (value) => hasMinLength(value, 6));
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    console.log(enteredCredentials);
-  }
+    if (emailHasError || passwordHasError) {
+      return;
+    }
 
-  function handleCredentialsInputChange(identifier, value) {
-    setEnteredCredentials((prevCreds) => ({
-      ...prevCreds,
-      [identifier]: value,
-    }));
+    console.log(emailValue, passwordValue);
   }
 
   return (
@@ -24,27 +32,27 @@ export default function StateLogin() {
       <h2>Login</h2>
 
       <div className="control-row">
-        <div className="control no-margin">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={enteredCredentials.email}
-            onChange={handleCredentialsInputChange}
-          />
-        </div>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          name="email"
+          value={emailValue}
+          error={emailHasError && "Please enter a valid email."}
+          onBlur={handleEmailBlur}
+          onChange={handleEmailChange}
+        />
 
-        <div className="control no-margin">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={enteredCredentials.password}
-            onChange={handleCredentialsInputChange}
-          />
-        </div>
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          name="password"
+          value={passwordValue}
+          error={passwordHasError && "Please enter a valid password."}
+          onBlur={handlePasswordBlur}
+          onChange={handlePasswordChange}
+        />
       </div>
 
       <p className="form-actions">
