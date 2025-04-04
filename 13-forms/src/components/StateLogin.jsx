@@ -6,6 +6,14 @@ export default function StateLogin() {
     password: "",
   });
 
+  const [didLostFocus, setDidLostFocus] = useState({
+    email: false,
+    password: false,
+  });
+
+  const emailIsInvalid =
+  didLostFocus.email && !enteredCredentials.email.includes("@");
+
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -16,6 +24,18 @@ export default function StateLogin() {
     setEnteredCredentials((prevCreds) => ({
       ...prevCreds,
       [identifier]: value,
+    }));
+
+    setDidLostFocus(prevFocus => ({
+      ...prevFocus,
+      [identifier]: false
+    }));
+  }
+
+  function handleInputBlur(identifier) {
+    setDidLostFocus((prevEdit) => ({
+      ...prevEdit,
+      [identifier]: true,
     }));
   }
 
@@ -30,9 +50,15 @@ export default function StateLogin() {
             id="email"
             type="email"
             name="email"
+            onBlur={() => handleInputBlur("email")}
             value={enteredCredentials.email}
-            onChange={handleCredentialsInputChange}
+            onChange={(event) =>
+              handleCredentialsInputChange("email", event.target.value)
+            }
           />
+          <div className="control-error">
+            {emailIsInvalid && <p>Please enter a valid email address.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
@@ -41,8 +67,11 @@ export default function StateLogin() {
             id="password"
             type="password"
             name="password"
+            onBlur={() => handleInputBlur("password")}
             value={enteredCredentials.password}
-            onChange={handleCredentialsInputChange}
+            onChange={(event) =>
+              handleCredentialsInputChange("email", event.target.value)
+            }
           />
         </div>
       </div>
